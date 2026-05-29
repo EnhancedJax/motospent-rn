@@ -28,12 +28,17 @@ export default function TabLayout() {
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
   const palette = buildTheme(scheme);
 
-  const [fontsLoaded] = useFonts({
-    GoogleSans_400Regular,
-    GoogleSans_500Medium,
-    GoogleSans_600SemiBold,
-    GoogleSans_700Bold,
-  });
+  const [androidFontsLoaded] = useFonts(
+    Platform.OS === 'android'
+      ? {
+          GoogleSans_400Regular,
+          GoogleSans_500Medium,
+          GoogleSans_600SemiBold,
+          GoogleSans_700Bold,
+        }
+      : {},
+  );
+  const fontsLoaded = Platform.OS !== 'android' || androidFontsLoaded;
 
   useEffect(() => {
     if (fontsLoaded) {

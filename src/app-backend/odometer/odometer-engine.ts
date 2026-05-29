@@ -50,11 +50,24 @@ function findNeighbors(
   return { previous, next };
 }
 
+export type LatestOdometerReading = {
+  odometerKm: number;
+  recordedAt: number;
+};
+
 export const odometerEngine = {
   async getLatestOdometerKm(motorcycleId: string): Promise<number> {
+    const reading = await odometerEngine.getLatestOdometerReading(motorcycleId);
+    return reading.odometerKm;
+  },
+
+  async getLatestOdometerReading(motorcycleId: string): Promise<LatestOdometerReading> {
     const latestExpense = await expensesRepository.findLatestByMotorcycleId(motorcycleId);
     if (latestExpense) {
-      return latestExpense.odometerKm;
+      return {
+        odometerKm: latestExpense.odometerKm,
+        recordedAt: latestExpense.date,
+      };
     }
 
     const motorcycle = await motorcyclesRepository.findById(motorcycleId);
@@ -62,7 +75,10 @@ export const odometerEngine = {
       throw new OdometerTimelineError(`Motorcycle not found: ${motorcycleId}`);
     }
 
-    return motorcycle.odometerAtAdditionKm;
+    return {
+      odometerKm: motorcycle.odometerAtAdditionKm,
+      recordedAt: motorcycle.createdAt,
+    };
   },
 
   async validateOdometerForExpense(params: {
