@@ -55,6 +55,12 @@ export type LatestOdometerReading = {
   recordedAt: number;
 };
 
+export type OdometerBoundsKm = {
+  minKm: number;
+  maxKm: number | null;
+  suggestedKm: number;
+};
+
 export const odometerEngine = {
   async getLatestOdometerKm(motorcycleId: string): Promise<number> {
     const reading = await odometerEngine.getLatestOdometerReading(motorcycleId);
@@ -129,6 +135,73 @@ export const odometerEngine = {
         `Odometer (${odometerKm} km) cannot exceed a later expense on ${new Date(next.date).toISOString().slice(0, 10)} (${next.odometerKm} km)`,
       );
     }
+  },
+
+  async getOdometerBoundsForExpense(params: {
+    motorcycleId: string;
+    date: number;
+    expenseId?: string;
+    createdAt?: number;
+    currentOdometerKm?: number;
+  }): Promise<OdometerBoundsKm> {
+    const { motorcycleId, date, expenseId } = params;
+
+    const motorcycle = await motorcyclesRepository.findById(motorcycleId);
+    if (!motorcycle) {
+      throw new OdometerTimelineError(`Motorcycle not found: ${motorcycleId}`);
+    }
+
+    let createdAt = params.createdAt;
+    if (createdAt === undefined) {
+      if (expenseId) {
+        const existing = await expensesRepository.findById(expenseId);
+        if (!existing) {
+          throw new OdometerTimelineError(`Expense not found: ${expenseId}`);
+        }
+        createdAt = existing.createdAt;
+      } else {
+        createdAt = Date.now();
+      }
+    }
+
+    const expenses = await expensesRepository.findAllForMotorcycleSorted(motorcycleId);
+    const candidate: TimelinePoint = { date, createdAt };
+    const { previous, next } = findNeighbors(expenses, candidate, expenseId);
+
+    let minKm = Math.max(
+      motorcycle.odometerAtAdditionKm,
+      previous?.odometerKm ?? motorcycle.odometerAtAdditionKm,
+    );
+    let maxKm = next?.odometerKm ?? null;
+
+    if (expenseId) {
+      const existing = await expensesRepository.findById(expenseId);
+      if (existing) {
+        minKm = Math.min(minKm, existing.odometerKm);
+        if (maxKm !== null) {
+          maxKm = Math.max(maxKm, existing.odometerKm);
+        }
+      }
+    }
+
+    let suggestedKm: number;
+    if (params.currentOdometerKm !== undefined && expenseId) {
+      suggestedKm = params.currentOdometerKm;
+    } else if (expenseId) {
+      const existing = await expensesRepository.findById(expenseId);
+      suggestedKm = existing?.odometerKm ?? minKm;
+    } else {
+      suggestedKm = await odometerEngine.getLatestOdometerKm(motorcycleId);
+    }
+
+    if (suggestedKm < minKm) {
+      suggestedKm = minKm;
+    }
+    if (maxKm !== null && suggestedKm > maxKm) {
+      suggestedKm = maxKm;
+    }
+
+    return { minKm, maxKm, suggestedKm };
   },
 
   async validateMotorcycleBaseline(motorcycleId: string, odometerAtAdditionKm: number): Promise<void> {

@@ -10,10 +10,11 @@ import { useTheme } from '@/hooks/use-theme';
 type ScreenLayoutProps = {
   title: string;
   subtitle?: string;
+  headerRight?: React.ReactNode;
   children?: React.ReactNode;
 };
 
-export function ScreenLayout({ title, subtitle, children }: ScreenLayoutProps) {
+export function ScreenLayout({ title, subtitle, headerRight, children }: ScreenLayoutProps) {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
 
@@ -32,12 +33,17 @@ export function ScreenLayout({ title, subtitle, children }: ScreenLayoutProps) {
       ]}>
       <ThemedView style={styles.container}>
         <ThemedView style={styles.header}>
-          <ThemedText type="subtitle">{title}</ThemedText>
-          {subtitle ? (
-            <ThemedText style={styles.subtitle} themeColor="textSecondary">
-              {subtitle}
-            </ThemedText>
-          ) : null}
+          <ThemedView style={styles.headerRow}>
+            <ThemedView style={styles.headerText}>
+              <ThemedText type="subtitle">{title}</ThemedText>
+              {subtitle ? (
+                <ThemedText style={styles.subtitle} themeColor="textSecondary">
+                  {subtitle}
+                </ThemedText>
+              ) : null}
+            </ThemedView>
+            {headerRight}
+          </ThemedView>
         </ThemedView>
         {children}
       </ThemedView>
@@ -59,8 +65,18 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   header: {
-    gap: Spacing.two,
     paddingBottom: Spacing.three,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: Spacing.three,
+  },
+  headerText: {
+    flex: 1,
+    gap: Spacing.two,
+    minWidth: 0,
   },
   subtitle: {
     lineHeight: 22,

@@ -42,6 +42,32 @@ export const expensesService = {
     return fromStorageKm(km, distanceUnit);
   },
 
+  async getOdometerBounds(params: {
+    motorcycleId: string;
+    date: number;
+    expenseId?: string;
+    currentOdometer?: number;
+  }): Promise<{ min: number; max: number | null; suggested: number }> {
+    const distanceUnit = await requireDistanceUnit();
+    const currentOdometerKm =
+      params.currentOdometer !== undefined
+        ? toStorageKm(params.currentOdometer, distanceUnit)
+        : undefined;
+
+    const bounds = await odometerEngine.getOdometerBoundsForExpense({
+      motorcycleId: params.motorcycleId,
+      date: params.date,
+      expenseId: params.expenseId,
+      currentOdometerKm,
+    });
+
+    return {
+      min: fromStorageKm(bounds.minKm, distanceUnit),
+      max: bounds.maxKm !== null ? fromStorageKm(bounds.maxKm, distanceUnit) : null,
+      suggested: fromStorageKm(bounds.suggestedKm, distanceUnit),
+    };
+  },
+
   async create(input: CreateExpenseInput): Promise<ExpenseDTO> {
     const motorcycle = await motorcyclesRepository.findById(input.motorcycleId);
     if (!motorcycle) {

@@ -10,14 +10,13 @@ import {
   ActivityIndicator,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 import DatePicker from "react-native-date-picker";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { DomainError, motorcyclesService } from "@/app-backend";
+import { KeyboardAwareFormScroll } from "@/components/keyboard-aware-form-scroll";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import {
@@ -61,7 +60,6 @@ export function MotorcycleForm({
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
   const { distanceUnit } = useSettings();
   const unit = distanceUnit ?? "km";
   const setPendingSelectedId = useMotorcycleUiStore(
@@ -211,18 +209,7 @@ export function MotorcycleForm({
 
   return (
     <ThemedView style={[styles.screen, { backgroundColor: theme.background }]}>
-      <ScrollView
-        style={styles.scrollView}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: Platform.OS === "ios" ? 88 : Spacing.three,
-            paddingBottom: Math.max(insets.bottom, Spacing.four),
-          },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
+      <KeyboardAwareFormScroll footerInset={showFooterSubmit ? 56 : 0}>
         <View style={styles.form}>
           <MotorcycleFormPhoto
             mode={imageSourceMode}
@@ -376,7 +363,7 @@ export function MotorcycleForm({
             </Pressable>
           ) : null}
         </View>
-      </ScrollView>
+      </KeyboardAwareFormScroll>
 
       <DatePicker
         modal
@@ -398,13 +385,6 @@ export function MotorcycleForm({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: Spacing.four,
   },
   form: {
     gap: Spacing.three,

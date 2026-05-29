@@ -32,6 +32,9 @@ export default function DashboardScreen() {
 
   const [selectedMotorcycleId, setSelectedMotorcycleId] = useState<string | null>(null);
   const consumePendingSelectedId = useMotorcycleUiStore((state) => state.consumePendingSelectedId);
+  const setGlobalSelectedMotorcycleId = useMotorcycleUiStore(
+    (state) => state.setSelectedMotorcycleId,
+  );
 
   useEffect(() => {
     setSelectedMotorcycleId((current) => resolveSelectedMotorcycleId(sortedMotorcycles, current));
@@ -42,8 +45,9 @@ export default function DashboardScreen() {
       const pendingId = consumePendingSelectedId();
       if (pendingId) {
         setSelectedMotorcycleId(pendingId);
+        setGlobalSelectedMotorcycleId(pendingId);
       }
-    }, [consumePendingSelectedId]),
+    }, [consumePendingSelectedId, setGlobalSelectedMotorcycleId]),
   );
 
   const selectedMotorcycle =
@@ -77,7 +81,10 @@ export default function DashboardScreen() {
         <MotorcycleCarousel
           motorcycles={sortedMotorcycles}
           selectedId={selectedMotorcycleId}
-          onSelect={setSelectedMotorcycleId}
+          onSelect={(id) => {
+            setSelectedMotorcycleId(id);
+            setGlobalSelectedMotorcycleId(id);
+          }}
         />
         <MotorcycleHeroOverlay motorcycle={selectedMotorcycle} reading={reading} />
         <MotorcycleActionsButton

@@ -1,10 +1,5 @@
-import { ScreenLayout } from '@/components/screen-layout';
+import { ExpensesScreen } from './_container/expenses-screen';
 
-export default function ExpensesScreen() {
-  return (
-    <ScreenLayout
-      title="Expenses"
-      subtitle="Track fuel, maintenance, gear, and other costs."
-    />
-  );
+export default function ExpensesRoute() {
+  return <ExpensesScreen />;
 }
