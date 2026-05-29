@@ -17,7 +17,7 @@ import { getChartAxisStyle } from "@/theme/chart-colors";
 import { SectionTitle } from "../../../../components/section-title";
 import { computeBarSpacing, computeChartWidth } from "./chart-theme";
 import { InsightCard } from "./insight-card";
-import { SegmentedControl } from "./segmented-control";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 type SpendingChartsSectionProps = {
   result: SpendingChartsResult;
@@ -79,13 +79,11 @@ export function SpendingChartsSection({
             {formatCurrency(result.periodTotal)}
           </CardTitle>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <SegmentedControl
-            options={RANGE_OPTIONS}
-            value={range}
-            onChange={onRangeChange}
-          />
-        </ScrollView>
+        <SegmentedControl
+          options={RANGE_OPTIONS}
+          value={range}
+          onChange={onRangeChange}
+        />
         {!hasData ? (
           <ThemedText
             type="default"

@@ -40,11 +40,11 @@ export function DashboardInsights({ motorcycleId }: DashboardInsightsProps) {
         volumeUnit={analytics.volUnit}
       />
       <AverageSpendingSection
+        motorcycleId={motorcycleId}
         result={analytics.averageSpending}
         period={analytics.averageSpendingPeriod}
         onPeriodChange={analytics.setAverageSpendingPeriod}
         categoryKey={analytics.averageSpendingCategory}
-        onCategoryChange={analytics.setAverageSpendingCategory}
         categoryOptions={analytics.categoryOptions}
       />
       <SpendingChartsSection

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { buildCatalogMap, findFuelItemId } from '@/core/expense/expense-display';
 import { getChartColors } from '@/theme/chart-colors';
@@ -13,16 +13,14 @@ import { isAnalyticsExpense } from '@/core/dashboard/expense-filters';
 import { computeMaintenanceRecency } from '@/core/dashboard/maintenance-recency';
 import { computeOdometerTimeline } from '@/core/dashboard/odometer-timeline';
 import { computeSpendingCharts } from '@/core/dashboard/spending-charts';
-import type {
-  AverageSpendingPeriod,
-  SpendingChartRange,
-} from '@/core/dashboard/types';
 
 import { useExpenses } from './use-expenses';
 import { useMaintenanceReminders } from './use-maintenance-reminders';
 import { useMotorcycleOdometer } from './use-motorcycle-odometer';
 import { useSettings } from './use-settings';
 import { useStandardExpenseItems } from './use-standard-expense-items';
+import { useDashboardInsightsStore } from '@/stores/dashboard-insights-store';
+
 import { useTheme } from './use-theme';
 
 export function useDashboardAnalytics(motorcycleId: string | null) {
@@ -33,10 +31,21 @@ export function useDashboardAnalytics(motorcycleId: string | null) {
   const { reading, isLoading: isLoadingOdometer } = useMotorcycleOdometer(motorcycleId);
   const { distanceUnit, volumeUnit, isLoading: isLoadingSettings } = useSettings();
 
-  const [averageSpendingPeriod, setAverageSpendingPeriod] =
-    useState<AverageSpendingPeriod>('week');
-  const [averageSpendingCategory, setAverageSpendingCategory] = useState<string>('');
-  const [spendingChartRange, setSpendingChartRange] = useState<SpendingChartRange>('7d');
+  const averageSpendingPeriod = useDashboardInsightsStore(
+    (state) => state.averageSpendingPeriod,
+  );
+  const setAverageSpendingPeriod = useDashboardInsightsStore(
+    (state) => state.setAverageSpendingPeriod,
+  );
+  const averageSpendingCategory = useDashboardInsightsStore(
+    (state) => state.averageSpendingCategory,
+  );
+  const setAverageSpendingCategory = useDashboardInsightsStore(
+    (state) => state.setAverageSpendingCategory,
+  );
+  const spendingChartRange = useDashboardInsightsStore((state) => state.spendingChartRange);
+  const setSpendingChartRange = useDashboardInsightsStore((state) => state.setSpendingChartRange);
+  const setCategoryOptions = useDashboardInsightsStore((state) => state.setCategoryOptions);
 
   const distUnit = distanceUnit ?? 'km';
   const volUnit = volumeUnit ?? 'L';
@@ -115,10 +124,20 @@ export function useDashboardAnalytics(motorcycleId: string | null) {
     const analyticsExpenses = expenses.filter(isAnalyticsExpense);
     const categories = discoverCategories(analyticsExpenses, catalogById);
     return [
-      { key: ALL_CATEGORIES_KEY, label: 'All categories' },
-      ...categories.map((c) => ({ key: c.key, label: c.label })),
+      { key: ALL_CATEGORIES_KEY, label: 'All categories', iconKey: null },
+      ...categories.map((c) => ({
+        key: c.key,
+        label: c.label,
+        iconKey: c.iconKey,
+      })),
     ];
   }, [expenses, catalogById]);
+
+  useEffect(() => {
+    if (motorcycleId) {
+      setCategoryOptions(categoryOptions);
+    }
+  }, [motorcycleId, categoryOptions, setCategoryOptions]);
 
   const isLoading =
     isLoadingExpenses ||

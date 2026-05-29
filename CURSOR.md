@@ -49,3 +49,13 @@ Prefer `_container/` over `components/` when scoping is limited to one tab. Pref
 ## Date display
 
 Use [`formatAppDate`](src/core/format/format-app-date.ts) for every user-visible date (lists, forms, dashboard, expenses). Do not add alternate date formatters (e.g. raw `yyyy-MM-dd` or locale-only `Intl` in screens). Relative labels (“Today”, “Yesterday”, weekday) and older absolute dates follow that helper app-wide.
+
+## Phosphor icons
+
+Use [`phosphor-react-native`](https://phosphoricons.com/docs/react-native) for icons. Use imports with `Icon` suffix.
+
+```tsx
+import { CaretDownIcon } from "phosphor-react-native";
+
+<CaretDownIcon size={16} color={theme.mutedForeground} />;
+```

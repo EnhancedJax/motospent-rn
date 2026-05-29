@@ -68,7 +68,16 @@ export function OdometerChartSection({
     hideDataPoint: result.showDataPoints ? !point.hasReading : true,
   }));
 
-  const secondaryData = result.trendPoints.map((value) => ({ value }));
+  const yAxisOffset = Math.floor(
+    Math.min(
+      ...result.points.map((point) => point.odometerDisplay),
+      ...result.trendPoints,
+    ),
+  );
+
+  const secondaryData = result.trendPoints.map((value) => ({
+    value: value - yAxisOffset,
+  }));
 
   const spacing =
     result.points.length > 1
@@ -106,8 +115,9 @@ export function OdometerChartSection({
               curved: false,
               hideDataPoints: true,
             }}
-            curved
+            curved={false}
             noOfSections={4}
+            yAxisOffset={yAxisOffset}
             yAxisTextStyle={axisStyle}
             xAxisLabelTextStyle={axisStyle}
             yAxisColor={theme.border}

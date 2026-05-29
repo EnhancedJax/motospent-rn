@@ -1,14 +1,16 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import type { DistanceUnit } from '@/app-backend';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from '@/hooks/use-theme';
 
-const UNITS = [
-  { value: 'km' as const, label: 'km' },
-  { value: 'mi' as const, label: 'mi' },
+const UNITS: { value: DistanceUnit; label: string }[] = [
+  { value: 'km', label: 'km' },
+  { value: 'mi', label: 'mi' },
 ];
 
 export function DistanceUnitPicker() {
@@ -20,34 +22,15 @@ export function DistanceUnitPicker() {
       <ThemedText type="default" style={styles.title}>
         Distance unit
       </ThemedText>
-      {isLoading ? (
+      {isLoading || distanceUnit == null ? (
         <ActivityIndicator color={theme.primary} />
       ) : (
-        <View style={[styles.segmented, { backgroundColor: theme.muted }]}>
-          {UNITS.map((unit) => {
-            const isSelected = distanceUnit === unit.value;
-            return (
-              <Pressable
-                key={unit.value}
-                accessibilityRole="button"
-                accessibilityState={{ selected: isSelected }}
-                onPress={() => void setDistanceUnit(unit.value)}
-                style={[
-                  styles.segment,
-                  isSelected && {
-                    backgroundColor: theme.card,
-                    shadowColor: theme.border,
-                  },
-                ]}>
-                <ThemedText
-                  type="smallBold"
-                  themeColor={isSelected ? 'text' : 'textSecondary'}>
-                  {unit.label}
-                </ThemedText>
-              </Pressable>
-            );
-          })}
-        </View>
+        <SegmentedControl
+          compact
+          options={UNITS}
+          value={distanceUnit}
+          onChange={(unit) => void setDistanceUnit(unit)}
+        />
       )}
     </View>
   );
@@ -62,22 +45,5 @@ const styles = StyleSheet.create({
   },
   title: {
     flexShrink: 1,
-  },
-  segmented: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    padding: Spacing.half,
-    gap: Spacing.half,
-  },
-  segment: {
-    minWidth: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.three,
-    borderRadius: 8,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
   },
 });

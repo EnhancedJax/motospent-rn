@@ -33,8 +33,14 @@ export default function DashboardScreen() {
   );
 
   useEffect(() => {
-    setSelectedMotorcycleId((current) => resolveSelectedMotorcycleId(sortedMotorcycles, current));
-  }, [sortedMotorcycles]);
+    setSelectedMotorcycleId((current) => {
+      const resolved = resolveSelectedMotorcycleId(sortedMotorcycles, current);
+      if (resolved) {
+        setGlobalSelectedMotorcycleId(resolved);
+      }
+      return resolved;
+    });
+  }, [sortedMotorcycles, setGlobalSelectedMotorcycleId]);
 
   useFocusEffect(
     useCallback(() => {

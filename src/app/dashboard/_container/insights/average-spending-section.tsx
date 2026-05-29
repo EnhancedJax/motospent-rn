@@ -1,7 +1,9 @@
-import { Picker } from "@react-native-picker/picker";
+import { CaretDownIcon } from "phosphor-react-native";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
+import { openAverageSpendingCategorySheet } from "@/app/dashboard/_container/average-spending-category-utils";
+import { ExpenseItemIcon } from "@/components/expense-item-icon";
 import { ThemedText } from "@/components/themed-text";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Spacing } from "@/constants/theme";
@@ -11,31 +13,37 @@ import type {
 } from "@/core/dashboard/types";
 import { formatCurrency } from "@/core/expense/format-currency";
 import { useTheme } from "@/hooks/use-theme";
+import type { AverageSpendingCategoryOption } from "@/stores/dashboard-insights-store";
 
 import { SectionTitle } from "../../../../components/section-title";
 import { InsightCard } from "./insight-card";
-import { SegmentedControl } from "./segmented-control";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+
+export type { AverageSpendingCategoryOption };
 
 type AverageSpendingSectionProps = {
+  motorcycleId: string;
   result: AverageSpendingResult;
   period: AverageSpendingPeriod;
   onPeriodChange: (period: AverageSpendingPeriod) => void;
   categoryKey: string;
-  onCategoryChange: (key: string) => void;
-  categoryOptions: { key: string; label: string }[];
+  categoryOptions: AverageSpendingCategoryOption[];
 };
 
 export function AverageSpendingSection({
+  motorcycleId,
   result,
   period,
   onPeriodChange,
   categoryKey,
-  onCategoryChange,
   categoryOptions,
 }: AverageSpendingSectionProps) {
   const theme = useTheme();
 
   const periodLabel = period === "week" ? "week" : "month";
+  const selectedCategory =
+    categoryOptions.find((option) => option.key === categoryKey) ??
+    categoryOptions[0];
   const spread =
     result.min !== null && result.max !== null
       ? `${formatCurrency(result.min)} ↓  ${formatCurrency(result.max)} ↑`
@@ -53,27 +61,22 @@ export function AverageSpendingSection({
           value={period}
           onChange={onPeriodChange}
         />
-        <View
-          style={[
-            styles.pickerWrap,
-            { backgroundColor: theme.muted, borderColor: theme.border },
-          ]}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Select spending category"
+          onPress={() =>
+            openAverageSpendingCategorySheet(motorcycleId, categoryOptions)
+          }
+          style={[styles.categoryButton, { backgroundColor: theme.muted }]}
         >
-          <Picker
-            selectedValue={categoryKey}
-            onValueChange={(value) => onCategoryChange(String(value))}
-            dropdownIconColor={theme.foreground}
-            style={[styles.picker, { color: theme.foreground }]}
-          >
-            {categoryOptions.map((option) => (
-              <Picker.Item
-                key={option.key}
-                label={option.label}
-                value={option.key}
-              />
-            ))}
-          </Picker>
-        </View>
+          {selectedCategory ? (
+            <ExpenseItemIcon iconKey={selectedCategory.iconKey} size={20} />
+          ) : null}
+          <ThemedText type="default" style={styles.categoryButtonLabel}>
+            {selectedCategory?.label ?? "Category"}
+          </ThemedText>
+          <CaretDownIcon size={16} color={theme.mutedForeground} />
+        </Pressable>
         <CardDescription>Average spend per {periodLabel}</CardDescription>
         <CardTitle style={styles.value}>
           {result.periodCount > 0 ? formatCurrency(result.average) : "—"}
@@ -104,14 +107,17 @@ const styles = StyleSheet.create({
   content: {
     gap: Spacing.two,
   },
-  pickerWrap: {
-    borderWidth: 1,
-    borderRadius: 12,
-    overflow: "hidden",
-    ...(Platform.OS === "ios" ? { height: 120 } : {}),
+  categoryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.two,
+    borderRadius: 9999,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
-  picker: {
-    ...(Platform.OS === "android" ? { height: 48 } : {}),
+  categoryButtonLabel: {
+    flex: 1,
+    fontSize: 16,
   },
   value: {
     fontSize: 28,
