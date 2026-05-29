@@ -5,6 +5,7 @@ import { children, field } from "@nozbe/watermelondb/decorators";
 import type Expense from "./Expense";
 import type MaintenanceReminder from "./MaintenanceReminder";
 
+// StandardExpenseItems is a catalog of item types that can be used to create expenses, and is not editable by the user
 export default class StandardExpenseItem extends Model {
   static table = "standard_expense_items";
 

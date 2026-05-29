@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { settingsService } from '@/app-backend';
+import { settingsService, standardExpenseItemsService } from '@/app-backend';
 
 type AppState = {
   dbReady: boolean;
@@ -14,6 +14,7 @@ export const useAppStore = create<AppState>((set) => ({
   initializeApp: async () => {
     try {
       await settingsService.seedDefaults();
+      await standardExpenseItemsService.seedDefaults();
       set({ dbReady: true, initError: null });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to initialize app';
