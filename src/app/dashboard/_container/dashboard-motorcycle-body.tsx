@@ -6,6 +6,8 @@ import { Spacing } from '@/constants/theme';
 import type { MotorcycleDTO } from '@/core/database/types';
 import { useTheme } from '@/hooks/use-theme';
 
+import { DashboardInsights } from './insights/dashboard-insights';
+
 type DashboardMotorcycleBodyProps = {
   motorcycle: MotorcycleDTO | null;
   isLoading: boolean;
@@ -43,26 +45,19 @@ export function DashboardMotorcycleBody({
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <ThemedText type="default" themeColor="textSecondary" style={styles.message}>
-        Dashboard details for {motorcycle.name} will appear here.
-      </ThemedText>
-    </View>
-  );
+  return <DashboardInsights motorcycleId={motorcycle.id} />;
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: Spacing.four,
     gap: Spacing.three,
+    paddingBottom: Spacing.two,
   },
   loading: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Spacing.six,
+    paddingVertical: Spacing.six,
+    minHeight: 120,
   },
   message: {
     lineHeight: 24,

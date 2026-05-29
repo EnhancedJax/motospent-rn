@@ -1,13 +1,13 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { Plus } from 'phosphor-react-native';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import {
   resolveSelectedMotorcycleId,
   sortMotorcyclesForCarousel,
 } from '@/app/dashboard/_container/motorcycle-utils';
-import { ScreenLayout } from '@/components/screen-layout';
+import { PageShell } from '@/components/page-shell';
 import { Spacing } from '@/constants/theme';
 import { expensesService } from '@/app-backend';
 import { useExpenses } from '@/hooks/use-expenses';
@@ -88,8 +88,9 @@ export function ExpensesScreen() {
   );
 
   return (
-    <ScreenLayout title="Expenses" headerRight={addExpenseButton}>
-      <View style={styles.content}>
+    <PageShell>
+      <PageShell.Header title="Expenses" headerRight={addExpenseButton} />
+      <PageShell.Content style={styles.content}>
         <MotorcycleSelect
           motorcycles={sortedMotorcycles}
           selectedId={effectiveMotorcycleId}
@@ -106,8 +107,8 @@ export function ExpensesScreen() {
           hasMotorcycle={sortedMotorcycles.length > 0}
           onDelete={handleDelete}
         />
-      </View>
-    </ScreenLayout>
+      </PageShell.Content>
+    </PageShell>
   );
 }
 

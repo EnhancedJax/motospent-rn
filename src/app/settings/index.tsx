@@ -1,17 +1,19 @@
-import { DistanceUnitPicker } from '@/components/settings/distance-unit-picker';
-import { ScreenLayout } from '@/components/screen-layout';
-import { Spacing } from '@/constants/theme';
-import { StyleSheet, View } from 'react-native';
+import { DistanceUnitPicker } from "@/app/settings/container/distance-unit-picker";
+import { PageShell } from "@/components/page-shell";
+import { Spacing } from "@/constants/theme";
+import { StyleSheet } from "react-native";
 
 export default function SettingsScreen() {
   return (
-    <ScreenLayout
-      title="Settings"
-      subtitle="Preferences, currency, and app configuration.">
-      <View style={styles.content}>
+    <PageShell>
+      <PageShell.Header
+        title="Settings"
+        subtitle="Preferences, currency, and app configuration."
+      />
+      <PageShell.Content style={styles.content}>
         <DistanceUnitPicker />
-      </View>
-    </ScreenLayout>
+      </PageShell.Content>
+    </PageShell>
   );
 }
 

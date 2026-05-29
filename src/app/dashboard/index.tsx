@@ -1,13 +1,11 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { PageShell } from '@/components/page-shell';
+import { Spacing } from '@/constants/theme';
 import { useMotorcycleOdometer } from '@/hooks/use-motorcycle-odometer';
 import { useMotorcycles } from '@/hooks/use-motorcycles';
-import { useTheme } from '@/hooks/use-theme';
 import { useMotorcycleUiStore } from '@/stores/motorcycle-ui-store';
 
 import { DashboardMotorcycleBody } from './_container/dashboard-motorcycle-body';
@@ -21,8 +19,6 @@ import {
 } from './_container/motorcycle-utils';
 
 export default function DashboardScreen() {
-  const theme = useTheme();
-  const insets = useSafeAreaInsets();
   const { motorcycles, isLoading: isLoadingList } = useMotorcycles();
 
   const sortedMotorcycles = useMemo(
@@ -65,19 +61,9 @@ export default function DashboardScreen() {
     }
   };
 
-  const horizontalPadding = Math.max(insets.left, Spacing.four);
-
   return (
-    <ThemedView
-      style={[
-        styles.screen,
-        {
-          backgroundColor: theme.background,
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom + BottomTabInset,
-        },
-      ]}>
-      <View style={styles.heroSection}>
+    <PageShell>
+      <PageShell.FullBleed style={styles.heroSection}>
         <MotorcycleCarousel
           motorcycles={sortedMotorcycles}
           selectedId={selectedMotorcycleId}
@@ -92,40 +78,25 @@ export default function DashboardScreen() {
           onAdd={openCreateForm}
           onEdit={openEditForm}
         />
-      </View>
+      </PageShell.FullBleed>
 
-      <View
-        style={[
-          styles.body,
-          {
-            paddingLeft: horizontalPadding,
-            paddingRight: Math.max(insets.right, Spacing.four),
-          },
-        ]}>
+      <PageShell.Content style={styles.body}>
         <DashboardMotorcycleBody
           motorcycle={selectedMotorcycle}
           isLoading={isLoadingList || isLoadingOdometer}
           hasMotorcycles={sortedMotorcycles.length > 0}
           onAdd={openCreateForm}
         />
-      </View>
-    </ThemedView>
+      </PageShell.Content>
+    </PageShell>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   heroSection: {
     position: 'relative',
-    overflow: 'hidden',
-    width: '100%',
   },
   body: {
-    flex: 1,
-    width: '100%',
-    maxWidth: MaxContentWidth,
-    alignSelf: 'center',
+    paddingTop: Spacing.three,
   },
 });
