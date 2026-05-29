@@ -4,6 +4,7 @@ export type CreateMotorcycleInput = {
   purchasePrice?: number;
   purchaseDate?: number;
   odometerAtAddition: number;
+  isPrimary?: boolean;
   imageUrl?: string;
 };
 
@@ -13,5 +14,6 @@ export type UpdateMotorcycleInput = {
   purchasePrice?: number;
   purchaseDate?: number;
   odometerAtAddition?: number;
+  isPrimary?: boolean;
   imageUrl?: string;
 };

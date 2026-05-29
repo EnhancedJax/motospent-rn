@@ -18,6 +18,7 @@ export const schema = appSchema({
         { name: "purchase_price", type: "number", isOptional: true },
         { name: "purchase_date", type: "number", isOptional: true },
         { name: "odometer_at_addition_km", type: "number" },
+        { name: "is_primary", type: "boolean", isIndexed: true },
         { name: "image_url", type: "string", isOptional: true },
         { name: "created_at", type: "number" },
         { name: "updated_at", type: "number" },

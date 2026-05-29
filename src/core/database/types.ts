@@ -10,6 +10,7 @@ export type MotorcycleDTO = {
   purchasePrice?: number;
   purchaseDate?: number;
   odometerAtAdditionKm: number;
+  isPrimary: boolean;
   imageUrl?: string;
   createdAt: number;
   updatedAt: number;
@@ -21,6 +22,7 @@ export type CreateMotorcycleRepositoryInput = {
   purchasePrice?: number;
   purchaseDate?: number;
   odometerAtAdditionKm: number;
+  isPrimary?: boolean;
   imageUrl?: string;
 };
 

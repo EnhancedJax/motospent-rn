@@ -21,6 +21,7 @@ export default class Motorcycle extends Model {
   @field("purchase_price") purchasePrice?: number;
   @field("purchase_date") purchaseDate?: number;
   @field("odometer_at_addition_km") odometerAtAdditionKm!: number;
+  @field("is_primary") isPrimary!: boolean;
   @field("image_url") imageUrl?: string;
   @field("created_at") createdAt!: number;
   @field("updated_at") updatedAt!: number;

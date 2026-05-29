@@ -19,10 +19,29 @@ function toDTO(motorcycle: Motorcycle): MotorcycleDTO {
     purchasePrice: motorcycle.purchasePrice,
     purchaseDate: motorcycle.purchaseDate,
     odometerAtAdditionKm: motorcycle.odometerAtAdditionKm,
+    isPrimary: motorcycle.isPrimary,
     imageUrl: motorcycle.imageUrl,
     createdAt: motorcycle.createdAt,
     updatedAt: motorcycle.updatedAt,
   };
+}
+
+async function clearPrimaryFlags(exceptId?: string): Promise<void> {
+  const primaries = await database
+    .get<Motorcycle>('motorcycles')
+    .query(notDeleted, Q.where('is_primary', true))
+    .fetch();
+
+  const now = Date.now();
+  for (const motorcycle of primaries) {
+    if (motorcycle.id === exceptId) {
+      continue;
+    }
+    await motorcycle.update((record) => {
+      record.isPrimary = false;
+      record.updatedAt = now;
+    });
+  }
 }
 
 export const motorcyclesRepository = {
@@ -36,6 +55,14 @@ export const motorcyclesRepository = {
     } catch {
       return null;
     }
+  },
+
+  async findPrimary(): Promise<MotorcycleDTO | null> {
+    const motorcycles = await database
+      .get<Motorcycle>('motorcycles')
+      .query(notDeleted, Q.where('is_primary', true), Q.take(1))
+      .fetch();
+    return motorcycles[0] ? toDTO(motorcycles[0]) : null;
   },
 
   async findAll(): Promise<MotorcycleDTO[]> {
@@ -54,17 +81,31 @@ export const motorcyclesRepository = {
       .pipe(map((records) => records.map(toDTO)));
   },
 
+  observePrimary(): Observable<MotorcycleDTO | null> {
+    return database
+      .get<Motorcycle>('motorcycles')
+      .query(notDeleted, Q.where('is_primary', true), Q.take(1))
+      .observe()
+      .pipe(map((records) => (records[0] ? toDTO(records[0]) : null)));
+  },
+
   async create(input: CreateMotorcycleRepositoryInput): Promise<MotorcycleDTO> {
     const now = Date.now();
     let created: Motorcycle | undefined;
 
     await database.write(async () => {
+      const shouldBePrimary = input.isPrimary === true;
+      if (shouldBePrimary) {
+        await clearPrimaryFlags();
+      }
+
       created = await database.get<Motorcycle>('motorcycles').create((record) => {
         record.name = input.name;
         record.notes = input.notes;
         record.purchasePrice = input.purchasePrice;
         record.purchaseDate = input.purchaseDate;
         record.odometerAtAdditionKm = input.odometerAtAdditionKm;
+        record.isPrimary = shouldBePrimary;
         record.imageUrl = input.imageUrl;
         record.createdAt = now;
         record.updatedAt = now;
@@ -79,6 +120,10 @@ export const motorcyclesRepository = {
     let updated: Motorcycle | undefined;
 
     await database.write(async () => {
+      if (input.isPrimary === true) {
+        await clearPrimaryFlags(id);
+      }
+
       const motorcycle = await database.get<Motorcycle>('motorcycles').find(id);
       updated = await motorcycle.update((record) => {
         if (input.name !== undefined) record.name = input.name;
@@ -88,7 +133,27 @@ export const motorcyclesRepository = {
         if (input.odometerAtAdditionKm !== undefined) {
           record.odometerAtAdditionKm = input.odometerAtAdditionKm;
         }
+        if (input.isPrimary !== undefined) record.isPrimary = input.isPrimary;
         if (input.imageUrl !== undefined) record.imageUrl = input.imageUrl;
+        record.updatedAt = now;
+      });
+    });
+
+    return toDTO(updated!);
+  },
+
+  async setPrimary(id: string): Promise<MotorcycleDTO> {
+    const now = Date.now();
+    let updated: Motorcycle | undefined;
+
+    await database.write(async () => {
+      await clearPrimaryFlags(id);
+      const motorcycle = await database.get<Motorcycle>('motorcycles').find(id);
+      if (motorcycle.deletedAt != null) {
+        throw new Error(`Cannot set deleted motorcycle as primary: ${id}`);
+      }
+      updated = await motorcycle.update((record) => {
+        record.isPrimary = true;
         record.updatedAt = now;
       });
     });
@@ -100,10 +165,25 @@ export const motorcyclesRepository = {
     const now = Date.now();
     await database.write(async () => {
       const motorcycle = await database.get<Motorcycle>('motorcycles').find(id);
+      const wasPrimary = motorcycle.isPrimary;
       await motorcycle.update((record) => {
         record.deletedAt = now;
+        record.isPrimary = false;
         record.updatedAt = now;
       });
+
+      if (wasPrimary) {
+        const remaining = await database
+          .get<Motorcycle>('motorcycles')
+          .query(notDeleted, Q.sortBy('created_at', Q.asc), Q.take(1))
+          .fetch();
+        if (remaining[0]) {
+          await remaining[0].update((record) => {
+            record.isPrimary = true;
+            record.updatedAt = now;
+          });
+        }
+      }
     });
   },
 };
