@@ -10,15 +10,15 @@ import { useMotorcycles } from '@/hooks/use-motorcycles';
 import { useTheme } from '@/hooks/use-theme';
 import { useMotorcycleUiStore } from '@/stores/motorcycle-ui-store';
 
-import { DashboardMotorcycleBody } from './container/dashboard-motorcycle-body';
-import { MotorcycleActionsButton } from './container/motorcycle-actions-button';
-import { MotorcycleCarousel } from './container/motorcycle-carousel';
-import { MotorcycleHeroOverlay } from './container/motorcycle-hero-overlay';
+import { DashboardMotorcycleBody } from './_container/dashboard-motorcycle-body';
+import { MotorcycleActionsButton } from './_container/motorcycle-actions-button';
+import { MotorcycleCarousel } from './_container/motorcycle-carousel';
+import { MotorcycleHeroOverlay } from './_container/motorcycle-hero-overlay';
 import {
   openMotorcycleForm,
   resolveSelectedMotorcycleId,
   sortMotorcyclesForCarousel,
-} from './container/motorcycle-utils';
+} from './_container/motorcycle-utils';
 
 export default function DashboardScreen() {
   const theme = useTheme();

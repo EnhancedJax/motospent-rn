@@ -2,7 +2,7 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { MotorcycleForm } from "@/app/dashboard/container/motorcycle-form";
+import { MotorcycleForm } from "@/app/dashboard/_container/motorcycle-form";
 import { useMotorcycles } from "@/hooks/use-motorcycles";
 import { useTheme } from "@/hooks/use-theme";
 

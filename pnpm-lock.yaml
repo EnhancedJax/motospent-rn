@@ -101,6 +101,9 @@ importers:
       react-native:
         specifier: 0.83.6
         version: 0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0)
+      react-native-date-picker:
+        specifier: ^5.0.13
+        version: 5.0.13(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
       react-native-gesture-handler:
         specifier: ~2.30.0
         version: 2.30.1(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0)
@@ -3672,6 +3675,12 @@ packages:
 
   react-is@19.2.6:
     resolution: {integrity: sha512-XjBR15BhXuylgWGuslhDKqlSayuqvqBX91BP8pauG8kd1zY8kotkNWbXksTCNRarse4kuGbe2kIY05ARtwNIvw==}
+
+  react-native-date-picker@5.0.13:
+    resolution: {integrity: sha512-qCLUODZVsJetO5zuoXjw1D39K527XWqBG8sOfhWdHyPzf13h8RXR1/RSKd1N0fdRDi5GdyizYmB0lPAK12/hbw==}
+    peerDependencies:
+      react: '>= 17.0.1'
+      react-native: '>= 0.64.3'
 
   react-native-gesture-handler@2.30.1:
     resolution: {integrity: sha512-xIUBDo5ktmJs++0fZlavQNvDEE4PsihWhSeJsJtoz4Q6p0MiTM9TgrTgfEgzRR36qGPytFoeq+ShLrVwGdpUdA==}
@@ -8710,6 +8719,11 @@ snapshots:
   react-is@18.3.1: {}
 
   react-is@19.2.6: {}
+
+  react-native-date-picker@5.0.13(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+      react-native: 0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0)
 
   react-native-gesture-handler@2.30.1(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.15)(react@19.2.0))(react@19.2.0):
     dependencies:

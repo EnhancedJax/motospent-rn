@@ -1,4 +1,3 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, useNavigation } from "expo-router";
 import React, {
   useCallback,
@@ -15,6 +14,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import DatePicker from "react-native-date-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { DomainError, motorcyclesService } from "@/app-backend";
@@ -30,6 +30,7 @@ import { Spacing } from "@/constants/theme";
 import type { MotorcycleDTO } from "@/core/database/types";
 import { formatAppDate } from "@/core/format/format-app-date";
 import { fromStorageKm } from "@/core/units/distance";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useSettings } from "@/hooks/use-settings";
 import { useTheme } from "@/hooks/use-theme";
 import { useMotorcycleUiStore } from "@/stores/motorcycle-ui-store";
@@ -58,6 +59,7 @@ export function MotorcycleForm({
   isFirstMotorcycle,
 }: MotorcycleFormProps) {
   const navigation = useNavigation();
+  const colorScheme = useColorScheme();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { distanceUnit } = useSettings();
@@ -326,28 +328,6 @@ export function MotorcycleForm({
                 <ThemedText type="linkPrimary">Clear date</ThemedText>
               </Pressable>
             ) : null}
-            {showDatePicker ? (
-              <DateTimePicker
-                value={purchaseDate ? new Date(purchaseDate) : new Date()}
-                mode="date"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={(_event, date) => {
-                  if (Platform.OS === "android") {
-                    setShowDatePicker(false);
-                  }
-                  if (date) {
-                    setValue("purchaseDate", date.getTime(), {
-                      shouldValidate: true,
-                    });
-                  }
-                }}
-              />
-            ) : null}
-            {Platform.OS === "ios" && showDatePicker ? (
-              <Pressable onPress={() => setShowDatePicker(false)}>
-                <ThemedText type="linkPrimary">Done</ThemedText>
-              </Pressable>
-            ) : null}
           </FormField>
 
           <Controller
@@ -397,6 +377,20 @@ export function MotorcycleForm({
           ) : null}
         </View>
       </ScrollView>
+
+      <DatePicker
+        modal
+        open={showDatePicker}
+        date={purchaseDate ? new Date(purchaseDate) : new Date()}
+        mode="date"
+        title="Purchase date"
+        theme={colorScheme === "dark" ? "dark" : "light"}
+        onConfirm={(date) => {
+          setShowDatePicker(false);
+          setValue("purchaseDate", date.getTime(), { shouldValidate: true });
+        }}
+        onCancel={() => setShowDatePicker(false)}
+      />
     </ThemedView>
   );
 }

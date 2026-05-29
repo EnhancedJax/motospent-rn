@@ -8,11 +8,11 @@ A motorcycle expense & maintenance tracker. Works fully offline. Mobile only.
 src/
 ├── app/
 │   ├── dashboard/
-│   │   └── container/
+│   │   └── _container/
 │   ├── expenses/
-│   │   └── container/
+│   │   └── _container/
 │   └── settings/
-│       └── container/
+│       └── _container/
 ├── app-backend/
 │   ├── errors/
 │   ├── expenses/
@@ -42,6 +42,6 @@ src/
 
 **`src/components/`** — Shared UI used across multiple routes or features. Examples: layout primitives, themed wrappers, tab chrome, generic form controls in `ui/`.
 
-**`src/app/<route>/container/`** — UI that belongs to a single tab or route subtree. Put a component here when it is only used under that subroute (e.g. dashboard-only widgets in `app/dashboard/container/`, expense-list rows in `app/expenses/container/`).
+**`src/app/<route>/_container/`** — UI that belongs to a single tab or route subtree. Put a component here when it is only used under that subroute (e.g. dashboard-only widgets in `app/dashboard/_container/`, expense-list rows in `app/expenses/_container/`). The leading underscore excludes the folder from Expo Router.
 
-Prefer `container/` over `components/` when scoping is limited to one tab. Prefer `components/` when the same piece of UI could appear on more than one screen.
+Prefer `_container/` over `components/` when scoping is limited to one tab. Prefer `components/` when the same piece of UI could appear on more than one screen.
