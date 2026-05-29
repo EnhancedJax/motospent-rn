@@ -16,6 +16,8 @@ export default class Expense extends Model {
     },
   };
 
+  @field("motorcycle_id") motorcycleId!: string;
+  @field("listed_item_id") listedItemId?: string;
   @field("item") item!: string;
   @field("cost") cost!: number;
   @field("odometer_km") odometerKm!: number;

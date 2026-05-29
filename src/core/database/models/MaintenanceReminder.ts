@@ -16,6 +16,8 @@ export default class MaintenanceReminder extends Model {
     },
   };
 
+  @field("motorcycle_id") motorcycleId!: string;
+  @field("standard_item_id") standardItemId!: string;
   @field("interval_distance_km") intervalDistanceKm!: number;
   @field("created_at") createdAt!: number;
   @field("updated_at") updatedAt!: number;
