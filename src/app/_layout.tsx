@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import '@/global.css';
 
 import {
@@ -11,6 +12,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
 import { Platform, useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
@@ -85,11 +87,13 @@ export default function TabLayout() {
   }
 
   return (
-    <ThemeProvider value={navigationTheme}>
-      <DatabaseProvider>
-        <AnimatedSplashOverlay />
-        <AppTabs />
-      </DatabaseProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={navigationTheme}>
+        <DatabaseProvider>
+          <AnimatedSplashOverlay />
+          <AppTabs />
+        </DatabaseProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
