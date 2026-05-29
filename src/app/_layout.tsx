@@ -17,6 +17,10 @@ import AppTabs from '@/components/app-tabs';
 import { DatabaseProvider } from '@/providers/database-provider';
 import { buildTheme } from '@/theme/build-theme';
 
+export const unstable_settings = {
+  anchor: 'dashboard',
+};
+
 SplashScreen.preventAutoHideAsync();
 
 export default function TabLayout() {

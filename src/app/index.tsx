@@ -1,10 +1,5 @@
-import { ScreenLayout } from '@/components/screen-layout';
+import { Redirect } from 'expo-router';
 
-export default function DashboardScreen() {
-  return (
-    <ScreenLayout
-      title="Dashboard"
-      subtitle="Overview of your motorcycle spending."
-    />
-  );
+export default function Index() {
+  return <Redirect href="/dashboard" withAnchor />;
 }
