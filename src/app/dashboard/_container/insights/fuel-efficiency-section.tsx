@@ -59,21 +59,21 @@ export function FuelEfficiencySection({
       />
       <View style={styles.row}>
         <InsightMetricCard
-          title="Distance per fuel unit"
+          title={`Distance per ${volLabel}`}
           value={`${formatNumber(distancePerVolume.avg)} ${perVolUnit}`}
           spread={formatSpread(
             distancePerVolume.min,
             distancePerVolume.max,
-            (v) => `${formatNumber(v)} ${perVolUnit}`,
+            (v) => `${formatNumber(v)}`,
           )}
         />
         <InsightMetricCard
-          title="Cost per distance unit"
+          title={`Cost per ${distLabel}`}
           value={`${formatCurrency(costPerDistance.avg)}/${distLabel}`}
           spread={formatSpread(
             costPerDistance.min,
             costPerDistance.max,
-            (v) => `${formatCurrency(v)}/${distLabel}`,
+            (v) => `${formatCurrency(v)}`,
           )}
         />
       </View>

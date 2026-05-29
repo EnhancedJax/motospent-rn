@@ -12,10 +12,6 @@ export const standardExpenseItemsService = {
   },
 
   async seedDefaults(): Promise<void> {
-    const count = await standardExpenseItemsRepository.count();
-    if (count > 0) {
-      return;
-    }
-    await standardExpenseItemsRepository.seed(STANDARD_EXPENSE_ITEM_SEEDS);
+    await standardExpenseItemsRepository.syncMissingSeeds(STANDARD_EXPENSE_ITEM_SEEDS);
   },
 };

@@ -49,6 +49,12 @@ export const STANDARD_EXPENSE_ITEM_SEEDS: StandardExpenseItemSeed[] = [
     countsTowardMaintenanceRecency: true,
   },
   {
+    name: 'Tire pressure adjustment',
+    suggestDistanceKm: 2000,
+    iconKey: 'CircleHalf',
+    countsTowardMaintenanceRecency: true,
+  },
+  {
     name: 'Brake pads inspection',
     suggestDistanceKm: 10000,
     iconKey: 'Disc',

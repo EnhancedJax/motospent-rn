@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, TextInput, type TextInputProps } from 'react-native';
 
 import { useTheme } from '@/hooks/use-theme';
-import { radius } from '@/theme/radius';
 
 export type FormInputProps = TextInputProps;
 
@@ -19,8 +18,7 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(function Fo
       style={[
         styles.input,
         {
-          backgroundColor: theme.muted,
-          borderColor: theme.border,
+          backgroundColor: theme.card,
           color: theme.foreground,
           fontFamily: theme.sans.medium,
         },
@@ -33,8 +31,7 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(function Fo
 
 const styles = StyleSheet.create({
   input: {
-    borderWidth: 1,
-    borderRadius: radius.md,
+    borderRadius: 9999,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,

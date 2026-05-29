@@ -13,7 +13,6 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
@@ -376,19 +375,11 @@ export function ExpenseForm({
 
           {itemMode === 'listed' ? (
             <FormField label="Standard item" error={errors.listedItemId?.message}>
-              <TextInput
+              <FormInput
                 value={itemSearch}
                 onChangeText={setItemSearch}
                 placeholder="Search items..."
-                placeholderTextColor={theme.mutedForeground}
-                style={[
-                  styles.searchInput,
-                  {
-                    backgroundColor: theme.muted,
-                    borderColor: theme.border,
-                    color: theme.text,
-                  },
-                ]}
+                style={styles.catalogSearch}
               />
               <View style={[styles.catalogList, { borderColor: theme.border }]}>
                 {filteredCatalogItems.map((item) => {
@@ -607,11 +598,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 2,
   },
-  searchInput: {
-    borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+  catalogSearch: {
     marginBottom: Spacing.two,
   },
   catalogList: {

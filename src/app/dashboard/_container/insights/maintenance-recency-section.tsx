@@ -13,8 +13,8 @@ import { formatAppDate } from "@/core/format/format-app-date";
 import { formatDistance } from "@/core/units/format-distance";
 import type { DistanceUnit } from "@/core/units/types";
 import { useTheme } from "@/hooks/use-theme";
-import { radius } from "@/theme/radius";
 
+import { WarningIcon } from "phosphor-react-native";
 import { SectionTitle } from "../../../../components/section-title";
 import { InsightCard } from "./insight-card";
 import { InsightEmptyCard } from "./insight-empty-card";
@@ -44,34 +44,34 @@ function MaintenanceRecencyCard({
     >
       <View style={styles.cardHeader}>
         <ExpenseItemIcon iconKey={item.iconKey} size={18} />
-        <ThemedText type="smallBold" numberOfLines={2} style={styles.cardTitle}>
+        <ThemedText
+          themeColor="mutedForeground"
+          type="small"
+          numberOfLines={2}
+          style={styles.cardTitle}
+        >
           {item.name}
         </ThemedText>
+      </View>
+      <View style={styles.distanceRow}>
+        <ThemedText type="default">
+          {formatDistance(item.mileageSinceKm, distanceUnit)} since
+        </ThemedText>
         {item.badge ? (
-          <View
-            style={[
-              styles.badge,
-              {
-                backgroundColor:
-                  item.badge === "due" ? theme.destructive : theme.primary,
-              },
-            ]}
-          >
+          <View style={styles.badge}>
+            <WarningIcon
+              size={16}
+              color={item.badge === "due" ? theme.chart2 : theme.chart1}
+            />
             <ThemedText
               type="smallBold"
-              style={{ color: theme.primaryForeground }}
+              themeColor={item.badge === "due" ? "chart2" : "chart1"}
             >
               {item.badge === "due" ? "Due" : "Soon"}
             </ThemedText>
           </View>
         ) : null}
       </View>
-      <ThemedText type="default">
-        {formatDistance(item.mileageSinceKm, distanceUnit)} since
-      </ThemedText>
-      <ThemedText type="small" themeColor="textSecondary">
-        Since {formatAppDate(item.lastServiceDate)}
-      </ThemedText>
       {item.progress !== null ? (
         <View style={[styles.progressTrack, { backgroundColor: theme.muted }]}>
           <View
@@ -85,6 +85,9 @@ function MaintenanceRecencyCard({
           />
         </View>
       ) : null}
+      <ThemedText type="small" themeColor="textSecondary">
+        Since {formatAppDate(item.lastServiceDate)}
+      </ThemedText>
     </InsightCard>
   );
 }
@@ -106,7 +109,7 @@ export function MaintenanceRecencySection({
   return (
     <View style={styles.section}>
       <SectionTitle title="Maintenance recency" />
-      <View style={styles.cardRow}>
+      <View style={styles.cards}>
         {result.items.map((item) => (
           <MaintenanceRecencyCard
             key={item.standardItemId}
@@ -129,10 +132,9 @@ const styles = StyleSheet.create({
   section: {
     gap: Spacing.two,
   },
-  cardRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.two,
+  cards: {
+    flexDirection: "column",
+    gap: Spacing.three,
   },
   card: {
     flexGrow: 1,
@@ -144,16 +146,22 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     gap: Spacing.one,
   },
   cardTitle: {
     flex: 1,
   },
+  distanceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.one,
+  },
   badge: {
-    paddingHorizontal: Spacing.one,
-    paddingVertical: 2,
-    borderRadius: radius.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.one,
   },
   progressTrack: {
     height: 4,

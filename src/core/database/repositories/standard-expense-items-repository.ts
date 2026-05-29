@@ -54,6 +54,10 @@ export const standardExpenseItemsRepository = {
   },
 
   async seed(items: StandardExpenseItemSeed[]): Promise<void> {
+    if (items.length === 0) {
+      return;
+    }
+
     await database.write(async () => {
       const collection = database.get<StandardExpenseItem>('standard_expense_items');
       const now = Date.now();
@@ -69,5 +73,13 @@ export const standardExpenseItemsRepository = {
       );
       await database.batch(...records);
     });
+  },
+
+  /** Inserts catalog seeds that are not yet present (by name). Safe to run on every app launch. */
+  async syncMissingSeeds(items: StandardExpenseItemSeed[]): Promise<void> {
+    const existing = await database.get<StandardExpenseItem>('standard_expense_items').query().fetch();
+    const existingNames = new Set(existing.map((record) => record.name));
+    const missing = items.filter((item) => !existingNames.has(item.name));
+    await this.seed(missing);
   },
 };
