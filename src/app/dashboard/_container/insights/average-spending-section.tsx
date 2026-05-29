@@ -1,11 +1,12 @@
 import { CaretDownIcon } from "phosphor-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
-import { openAverageSpendingCategorySheet } from "@/app/dashboard/_container/average-spending-category-utils";
+import { AverageSpendingCategoryPicker } from "@/app/dashboard/_container/average-spending-category-sheet";
 import { ExpenseItemIcon } from "@/components/expense-item-icon";
 import { ThemedText } from "@/components/themed-text";
-import { CardDescription, CardTitle } from "@/components/ui/card";
+import { CardTitle } from "@/components/ui/card";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Spacing } from "@/constants/theme";
 import type {
   AverageSpendingPeriod,
@@ -15,30 +16,31 @@ import { formatCurrency } from "@/core/expense/format-currency";
 import { useTheme } from "@/hooks/use-theme";
 import type { AverageSpendingCategoryOption } from "@/stores/dashboard-insights-store";
 
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { SectionTitle } from "../../../../components/section-title";
 import { InsightCard } from "./insight-card";
-import { SegmentedControl } from "@/components/ui/segmented-control";
 
 export type { AverageSpendingCategoryOption };
 
 type AverageSpendingSectionProps = {
-  motorcycleId: string;
   result: AverageSpendingResult;
   period: AverageSpendingPeriod;
   onPeriodChange: (period: AverageSpendingPeriod) => void;
   categoryKey: string;
+  onCategoryChange: (key: string) => void;
   categoryOptions: AverageSpendingCategoryOption[];
 };
 
 export function AverageSpendingSection({
-  motorcycleId,
   result,
   period,
   onPeriodChange,
   categoryKey,
+  onCategoryChange,
   categoryOptions,
 }: AverageSpendingSectionProps) {
   const theme = useTheme();
+  const [categorySheetOpen, setCategorySheetOpen] = useState(false);
 
   const periodLabel = period === "week" ? "week" : "month";
   const selectedCategory =
@@ -64,9 +66,7 @@ export function AverageSpendingSection({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Select spending category"
-          onPress={() =>
-            openAverageSpendingCategorySheet(motorcycleId, categoryOptions)
-          }
+          onPress={() => setCategorySheetOpen(true)}
           style={[styles.categoryButton, { backgroundColor: theme.muted }]}
         >
           {selectedCategory ? (
@@ -77,21 +77,39 @@ export function AverageSpendingSection({
           </ThemedText>
           <CaretDownIcon size={16} color={theme.mutedForeground} />
         </Pressable>
-        <CardDescription>Average spend per {periodLabel}</CardDescription>
-        <CardTitle style={styles.value}>
-          {result.periodCount > 0 ? formatCurrency(result.average) : "—"}
-        </CardTitle>
-        {spread ? (
-          <ThemedText type="small" themeColor="textSecondary">
-            {spread}
-          </ThemedText>
-        ) : null}
+        <View style={styles.valueContainer}>
+          <CardTitle style={styles.value}>
+            {result.periodCount > 0 ? formatCurrency(result.average) : "—"}
+          </CardTitle>
+          {spread ? (
+            <ThemedText type="default" themeColor="textSecondary">
+              {spread}
+            </ThemedText>
+          ) : null}
+        </View>
         <ThemedText type="small" themeColor="textSecondary">
           {result.periodCount > 0
             ? `Based on ${result.periodCount} ${result.periodLabel} with expenses.`
             : "No expenses in this category yet."}
         </ThemedText>
       </InsightCard>
+
+      <Sheet
+        visible={categorySheetOpen}
+        onClose={() => setCategorySheetOpen(false)}
+        title="Category"
+      >
+        <SheetContent>
+          <AverageSpendingCategoryPicker
+            options={categoryOptions}
+            selectedKey={categoryKey}
+            onSelect={(key) => {
+              onCategoryChange(key);
+              setCategorySheetOpen(false);
+            }}
+          />
+        </SheetContent>
+      </Sheet>
     </View>
   );
 }
@@ -118,6 +136,12 @@ const styles = StyleSheet.create({
   categoryButtonLabel: {
     flex: 1,
     fontSize: 16,
+  },
+  valueContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: Spacing.two,
+    paddingTop: Spacing.three,
   },
   value: {
     fontSize: 28,

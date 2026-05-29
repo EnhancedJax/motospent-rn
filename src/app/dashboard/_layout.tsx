@@ -3,7 +3,6 @@ import { Stack } from "expo-router";
 import {
   formSheetScreenOptions,
   maintenanceReminderFormSheetOptions,
-  pickerSheetScreenOptions,
 } from "@/navigation/form-sheet-options";
 
 export default function DashboardLayout() {
@@ -14,10 +13,6 @@ export default function DashboardLayout() {
       <Stack.Screen
         name="maintenance-reminder-form"
         options={maintenanceReminderFormSheetOptions}
-      />
-      <Stack.Screen
-        name="average-spending-category"
-        options={pickerSheetScreenOptions}
       />
     </Stack>
   );

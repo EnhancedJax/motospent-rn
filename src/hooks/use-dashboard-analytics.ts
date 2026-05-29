@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { buildCatalogMap, findFuelItemId } from '@/core/expense/expense-display';
 import { getChartColors } from '@/theme/chart-colors';
@@ -45,7 +45,6 @@ export function useDashboardAnalytics(motorcycleId: string | null) {
   );
   const spendingChartRange = useDashboardInsightsStore((state) => state.spendingChartRange);
   const setSpendingChartRange = useDashboardInsightsStore((state) => state.setSpendingChartRange);
-  const setCategoryOptions = useDashboardInsightsStore((state) => state.setCategoryOptions);
 
   const distUnit = distanceUnit ?? 'km';
   const volUnit = volumeUnit ?? 'L';
@@ -132,12 +131,6 @@ export function useDashboardAnalytics(motorcycleId: string | null) {
       })),
     ];
   }, [expenses, catalogById]);
-
-  useEffect(() => {
-    if (motorcycleId) {
-      setCategoryOptions(categoryOptions);
-    }
-  }, [motorcycleId, categoryOptions, setCategoryOptions]);
 
   const isLoading =
     isLoadingExpenses ||
